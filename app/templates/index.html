@@ -1,17 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
-    <header class="hero">
-        <div class="hero-text">
-            <h1>{{ user.title }}</h1>
-            <h2 class="name">{{ user.name }}</h2>
-            <p class="tagline">{{ user.tagline }}</p>
-            <div class="button-group">
-                {% for link in links %}
-                <a href="{{ url_for(link.endpoint) }}" class="btn">{{ link.tagline }}</a>
-                {% endfor %}
-            </div>
+<section class="hero section-shell reveal">
+    <div class="hero-copy">
+        <p class="eyebrow">{{ user.title }}</p>
+        <h1>{{ user.name }}</h1>
+        <p class="lead">{{ user.tagline }}</p>
+        <p class="meta">{{ user.location }} · {{ user.availability }}</p>
+        <div class="cta-row">
+            <a href="{{ url_for('work') }}" class="btn btn-primary">View Work</a>
+            <a href="{{ url_for('about') }}" class="btn btn-ghost">About Me</a>
+            <a href="{{ url_for('timeline') }}" class="btn btn-ghost">Timeline</a>
         </div>
-        <img id="profile-picture" class="profile-picture"
-             src="{{ url_for('static', filename=user.headshot) }}" alt="{{ user.altTxt }}">
-    </header>
+    </div>
+    <div class="hero-visual">
+        <img id="profile-picture" class="profile-picture" src="{{ url_for('static', filename=user.headshot) }}" alt="{{ user.altTxt }}">
+        <div class="glow"></div>
+    </div>
+</section>
+
+<section class="section-shell reveal">
+    <div class="section-heading">
+        <h2>What I Build</h2>
+        <p>From rapid prototypes to polished production features.</p>
+    </div>
+    <div class="card-grid three-col">
+        {% for service in user.services %}
+        <article class="glass-card interactive-card">
+            <h3>{{ service.name }}</h3>
+            <p>{{ service.description }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Core Skills</h2>
+    </div>
+    <div class="chip-row">
+        {% for skill in user.skills %}
+        <span class="chip">{{ skill }}</span>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

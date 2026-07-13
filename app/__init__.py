@@ -36,16 +36,16 @@ mydb.create_tables([TimelinePost])
 
 
 LINKS = [
-    {"name": "About",   "endpoint": "about", "tagline": "About Me"},
-    {"name": "Work",    "endpoint": "work", "tagline": "Work Experience"},
+    {"name": "About", "endpoint": "about", "tagline": "About Me"},
+    {"name": "Work", "endpoint": "work", "tagline": "Work Experience"},
     {"name": "Hobbies", "endpoint": "hobby", "tagline": "My Hobbies"},
     {"name": "Travel", "endpoint": "travel_page", "tagline": "My Travels"}
 ]
 
 CONTACT = [
-    {"label": "Contact Me", "href": "mailto:you@example.com"},
-    {"label": "GitHub", "href": "https://github.com/"},
-    {"label": "LinkedIn", "href": "https://linkedin.com/"},
+    {"label": "Contact", "href": "mailto:shrutimalsina@gmail.com"},
+    {"label": "GitHub", "href": "https://github.com/shrutimalsina"},
+    {"label": "LinkedIn", "href": "https://linkedin.com"},
 ]
 
 @app.route('/')
@@ -88,11 +88,11 @@ def travel_page():
     # Convert map to HTML
     map_html = travel_map._repr_html_()
 
-    return render_template('travel.html', title="Travel", map_html=map_html)
+    return render_template('travel.html', title="Travel", map_html=map_html, travel=travel)
 
 @app.context_processor
 def nav():
-    return{"links": LINKS, "contact": CONTACT, "url": os.getenv("URL")}
+    return{"links": LINKS, "contact": CONTACT, "url": os.getenv("URL"), "user": user}
 
 
 @app.route('/api/timeline_post', methods=['POST'])

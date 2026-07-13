@@ -1,28 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="about-section">
+<section class="section-shell reveal">
+    <div class="section-heading">
         <h1>About Me</h1>
-        <div class = "about-intro">
-            <img src="{{url_for('static', filename = user.headshot)}}" alt = "{{user.altTxt}}">
-            <div class = "about-text">
-                {% for p in user.about %}
-                <p>{{p}}</p>
+        <p>A quick snapshot of who I am and how I approach engineering.</p>
+    </div>
+    <div class="about-layout">
+        <img class="about-image" src="{{ url_for('static', filename=user.headshot) }}" alt="{{ user.altTxt }}">
+        <div class="glass-card">
+            {% for p in user.about %}
+            <p>{{ p }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-shell reveal">
+    <div class="card-grid three-col">
+        {% for stat in user.stats %}
+        <article class="glass-card stat-card">
+            <h2>{{ stat.value }}</h2>
+            <p>{{ stat.label }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Education</h2>
+    </div>
+    <div class="stacked-list">
+        {% for e in edu %}
+        <article class="glass-card timeline-item">
+            <p class="timeline-period">{{ e.period }}</p>
+            <h3>{{ e.degree }}</h3>
+            <p class="muted">{{ e.school }}</p>
+            <p>{{ e.description }}</p>
+            {% if e.links %}
+            <div class="chip-row">
+                {% for l in e.links %}
+                <a class="chip chip-link" href="{{ l.link }}" target="_blank" rel="noopener">{{ l.linkName }}</a>
                 {% endfor %}
             </div>
-        </div>
-
-        <h2 class = "section-subtitle">My Education</h2>
-        {% for e in edu %}
-        <article>
-            <h3>{{e.degree}} || {{e.school}}</h3>
-            <p>{{e.period}}</p>
-            <p>{{e.description}}</p>
-            {% if e.links %}
-            {% for l in e.links %}
-            <a href="{{l.link}}">{{l.linkName}}</a>
-            {% endfor %}
             {% endif %}
         </article>
         {% endfor %}
-    </section>
+    </div>
+</section>
 {% endblock %}

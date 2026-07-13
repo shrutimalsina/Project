@@ -1,15 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="hobby-grid">
+<section class="section-shell reveal">
+    <div class="section-heading">
         <h1>{{ title }}</h1>
-        <ul>
-        {% for hobby in hobbies %}
-            <li>
-                <h2>{{hobby.name}}</h2>
-                <img src="{{hobby.image}}" alt = "{{hobby.altTxt}}">
-                <p>{{hobby.desc}}</p>
-            </li>
+        <p>What keeps me energized outside coding.</p>
+    </div>
+
+    {% set categories = hobbies|map(attribute='category')|unique|list %}
+    <div class="filter-row" data-filter-group="hobbies">
+        <button class="chip chip-button is-active" data-filter="all" type="button">All</button>
+        {% for category in categories %}
+        <button class="chip chip-button" data-filter="{{ category|lower }}" type="button">{{ category }}</button>
         {% endfor %}
-        </ul>
-    </section>
+    </div>
+
+    <div class="card-grid">
+        {% for hobby in hobbies %}
+        <article class="glass-card hobby-card interactive-card filter-item" data-category="{{ hobby.category|lower }}">
+            <img src="{{ hobby.image }}" alt="{{ hobby.altTxt }}">
+            <div class="hobby-content">
+                <p class="timeline-period">{{ hobby.category }}</p>
+                <h2>{{ hobby.name }}</h2>
+                <p>{{ hobby.desc }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}
