@@ -34,6 +34,14 @@
             menuToggle.setAttribute('aria-expanded', String(isOpen));
             menuToggle.textContent = isOpen ? 'Close' : 'Menu';
         });
+
+        navLinks.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('is-open');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                menuToggle.textContent = 'Menu';
+            });
+        });
     }
 
     function initReveal() {
@@ -178,11 +186,47 @@
         setInterval(loadPosts, 30000);
     }
 
+    function initSlideshow() {
+        const slideshow = document.querySelector('[data-slideshow]');
+        if (!slideshow) return;
+
+        const slides = Array.from(slideshow.querySelectorAll('.slide'));
+        const dots = Array.from(slideshow.querySelectorAll('[data-slide-dot]'));
+        if (!slides.length) return;
+
+        let index = 0;
+        const show = (nextIndex) => {
+            index = (nextIndex + slides.length) % slides.length;
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('is-active', i === index);
+            });
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('is-active', i === index);
+            });
+        };
+
+        const prev = slideshow.querySelector('[data-slide-control="prev"]');
+        const next = slideshow.querySelector('[data-slide-control="next"]');
+
+        if (prev) prev.addEventListener('click', () => show(index - 1));
+        if (next) next.addEventListener('click', () => show(index + 1));
+
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                show(Number(dot.dataset.slideDot));
+            });
+        });
+
+        show(0);
+        setInterval(() => show(index + 1), 5000);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         initThemeToggle();
         initMobileNav();
         initReveal();
         initFilters();
         initTimeline();
+        initSlideshow();
     });
 })();
