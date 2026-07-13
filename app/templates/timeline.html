@@ -1,69 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="timeline-container">
-    <h1>Timeline</h1>
-
-    <!-- Form to add a new timeline post -->
-    <form id="timeline-form">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-            <label for="content">Content</label>
-            <textarea id="content" name="content" rows="4" required></textarea>
-        </div>
-        <button type="submit">Post</button>
-    </form>
-
-    <!-- Container for timeline posts -->
-    <div id="posts-container">
-        <h2>Posts</h2>
-        <div id="posts-list"></div>
+<section class="section-shell reveal">
+    <div class="section-heading">
+        <h1>Timeline</h1>
+        <p>Short updates, project wins, and learning moments.</p>
     </div>
-</div>
 
-<script>
-    // Function to fetch and display posts
-    async function loadPosts() {
-        const response = await fetch('/api/timeline_post');
-        const data = await response.json();
-        const postsList = document.getElementById('posts-list');
-        postsList.innerHTML = '';
-        data.timeline_posts.forEach(post => {
-            const postDiv = document.createElement('div');
-            postDiv.className = 'timeline-post';
-            postDiv.innerHTML = `
-                <h3>${post.name}</h3>
-                <p>${post.content}</p>
-                <small>${post.created_at}</small>
-            `;
-            postsList.appendChild(postDiv);
-        });
-    }
+    <div class="timeline-layout">
+        <form id="timeline-form" class="glass-card timeline-form" novalidate>
+            <h2>Share an update</h2>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" rows="4" placeholder="What did you build today?" required></textarea>
+            </div>
+            <button id="timeline-submit" class="btn btn-primary" type="submit">Post update</button>
+            <p id="timeline-status" class="status-message" role="status" aria-live="polite"></p>
+        </form>
 
-    // Handle form submission
-    document.getElementById('timeline-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(e.target);
-        const response = await fetch('/api/timeline_post', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            e.target.reset();
-            loadPosts(); // Reload posts after adding a new one
-        }
-    });
-
-    // Load posts on page load
-    loadPosts();
-</script>
+        <section class="glass-card timeline-feed" aria-live="polite">
+            <div class="feed-head">
+                <h2>Recent posts</h2>
+                <button id="timeline-refresh" class="chip chip-button" type="button">Refresh</button>
+            </div>
+            <div id="timeline-loading" class="muted">Loading posts…</div>
+            <div id="posts-list" class="stacked-list"></div>
+            <p id="timeline-empty" class="muted" hidden>No posts yet. Be the first one to share an update.</p>
+        </section>
+    </div>
+</section>
 {% endblock %}

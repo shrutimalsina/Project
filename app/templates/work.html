@@ -1,33 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
-    <section class="experience-section">
+<section class="section-shell reveal">
+    <div class="section-heading">
         <h1>Work Experience</h1>
+        <p>Selected roles where I shipped meaningful outcomes.</p>
+    </div>
 
-        <h2 class="section-subtitle">Current Experience</h2>
-        
+    <div class="filter-row" data-filter-group="work">
+        <button class="chip chip-button is-active" data-filter="all" type="button">All</button>
+        <button class="chip chip-button" data-filter="current" type="button">Current</button>
+        <button class="chip chip-button" data-filter="past" type="button">Past</button>
+    </div>
+
+    <div class="stacked-list">
         {% for item in exp.current %}
-        <article class="experience-item">
-            <h3>{{item.title}}</h3>
-            <p><strong>{{item.company}}</strong> | {{item.year}}</p>
+        <article class="glass-card timeline-item filter-item" data-category="current">
+            <p class="timeline-period">Current · {{ item.year }}</p>
+            <h3>{{ item.title }}</h3>
+            <p class="muted">{{ item.company }}</p>
             <ul>
                 {% for point in item.about %}
-                <li>{{point}}</li>
+                <li>{{ point }}</li>
                 {% endfor %}
             </ul>
+            <div class="chip-row">
+                {% for tag in item.tags %}
+                <span class="chip">{{ tag }}</span>
+                {% endfor %}
+            </div>
         </article>
         {% endfor %}
 
-        <h2 class="section-subtitle">Previous Experience</h2>
         {% for item in exp.past %}
-        <article class="experience-item">
-            <h3>{{item.title}}</h3>
-            <p><strong>{{item.company}}</strong> | {{item.year}}</p>
+        <article class="glass-card timeline-item filter-item" data-category="past">
+            <p class="timeline-period">Past · {{ item.year }}</p>
+            <h3>{{ item.title }}</h3>
+            <p class="muted">{{ item.company }}</p>
             <ul>
                 {% for point in item.about %}
-                <li>{{point}}</li>
+                <li>{{ point }}</li>
                 {% endfor %}
             </ul>
+            <div class="chip-row">
+                {% for tag in item.tags %}
+                <span class="chip">{{ tag }}</span>
+                {% endfor %}
+            </div>
         </article>
         {% endfor %}
-    </section>
+    </div>
+</section>
 {% endblock %}

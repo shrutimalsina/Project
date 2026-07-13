@@ -1,10 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="travel-section">
-    <h1>{{ title }}</h1>
-    <div class="map-container">
-        {{ map_html|safe }}
+<section class="section-shell reveal">
+    <div class="section-heading">
+        <h1>{{ title }}</h1>
+        <p>A map of places I have explored and where I want to go next.</p>
+    </div>
+
+    <div class="card-grid two-col travel-summary">
+        <article class="glass-card">
+            <h2>{{ travel.visited|length }}</h2>
+            <p>Visited destinations</p>
+        </article>
+        <article class="glass-card">
+            <h2>{{ travel.wishlist|length }}</h2>
+            <p>Wishlist destinations</p>
+        </article>
+    </div>
+
+    <div class="glass-card map-wrapper">
+        <div class="map-container">
+            {{ map_html|safe }}
+        </div>
     </div>
 </section>
 {% endblock %}
