@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero section-shell reveal">
+<section id="home" class="hero section-shell reveal">
     <div class="hero-copy">
         <p class="eyebrow">{{ user.title }}</p>
         <h1>{{ user.name }}</h1>
         <p class="lead">{{ user.tagline }}</p>
         <p class="meta">{{ user.location }} · {{ user.availability }}</p>
         <div class="cta-row">
-            <a href="{{ url_for('work') }}" class="btn btn-primary">View Work</a>
-            <a href="{{ url_for('about') }}" class="btn btn-ghost">About Me</a>
-            <a href="{{ url_for('timeline') }}" class="btn btn-ghost">Timeline</a>
+            <a href="#work" class="btn btn-primary">View Work</a>
+            <a href="#about" class="btn btn-ghost">About Me</a>
+            <a href="#timeline" class="btn btn-ghost">Timeline</a>
         </div>
     </div>
     <div class="hero-visual">
@@ -41,6 +41,221 @@
         {% for skill in user.skills %}
         <span class="chip">{{ skill }}</span>
         {% endfor %}
+    </div>
+</section>
+
+<section id="about" class="section-shell reveal">
+    <div class="section-heading">
+        <h2>About Me</h2>
+        <p>A quick snapshot of who I am and how I approach engineering.</p>
+    </div>
+    <div class="about-layout">
+        <img class="about-image" src="{{ url_for('static', filename=user.headshot) }}" alt="{{ user.altTxt }}">
+        <div class="glass-card">
+            {% for p in user.about %}
+            <p>{{ p }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-shell reveal">
+    <div class="card-grid three-col">
+        {% for stat in user.stats %}
+        <article class="glass-card stat-card">
+            <h2>{{ stat.value }}</h2>
+            <p>{{ stat.label }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Education</h2>
+    </div>
+    <div class="stacked-list">
+        {% for e in edu %}
+        <article class="glass-card timeline-item">
+            <p class="timeline-period">{{ e.period }}</p>
+            <h3>{{ e.degree }}</h3>
+            <p class="muted">{{ e.school }}</p>
+            <p>{{ e.description }}</p>
+            {% if e.links %}
+            <div class="chip-row">
+                {% for l in e.links %}
+                <a class="chip chip-link" href="{{ l.link }}" target="_blank" rel="noopener">{{ l.linkName }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="work" class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Work Experience</h2>
+        <p>Selected roles where I shipped meaningful outcomes.</p>
+    </div>
+
+    <div class="filter-row" data-filter-group="work">
+        <button class="chip chip-button is-active" data-filter="all" type="button">All</button>
+        <button class="chip chip-button" data-filter="current" type="button">Current</button>
+        <button class="chip chip-button" data-filter="past" type="button">Past</button>
+    </div>
+
+    <div class="stacked-list">
+        {% for item in exp.current %}
+        <article class="glass-card timeline-item filter-item" data-category="current">
+            <p class="timeline-period">Current · {{ item.year }}</p>
+            <h3>{{ item.title }}</h3>
+            <p class="muted">{{ item.company }}</p>
+            <ul>
+                {% for point in item.about %}
+                <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+            <div class="chip-row">
+                {% for tag in item.tags %}
+                <span class="chip">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </article>
+        {% endfor %}
+
+        {% for item in exp.past %}
+        <article class="glass-card timeline-item filter-item" data-category="past">
+            <p class="timeline-period">Past · {{ item.year }}</p>
+            <h3>{{ item.title }}</h3>
+            <p class="muted">{{ item.company }}</p>
+            <ul>
+                {% for point in item.about %}
+                <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+            <div class="chip-row">
+                {% for tag in item.tags %}
+                <span class="chip">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="hobbies" class="section-shell reveal">
+    <div class="section-heading">
+        <h2>My Hobbies</h2>
+        <p>What keeps me energized outside coding.</p>
+    </div>
+
+    {% set categories = hobbies|map(attribute='category')|unique|list %}
+    <div class="filter-row" data-filter-group="hobbies">
+        <button class="chip chip-button is-active" data-filter="all" type="button">All</button>
+        {% for category in categories %}
+        <button class="chip chip-button" data-filter="{{ category|lower }}" type="button">{{ category }}</button>
+        {% endfor %}
+    </div>
+
+    <div class="card-grid">
+        {% for hobby in hobbies %}
+        <article class="glass-card hobby-card interactive-card filter-item" data-category="{{ hobby.category|lower }}">
+            <img src="{{ hobby.image }}" alt="{{ hobby.altTxt }}">
+            <div class="hobby-content">
+                <p class="timeline-period">{{ hobby.category }}</p>
+                <h2>{{ hobby.name }}</h2>
+                <p>{{ hobby.desc }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="photos" class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Photo Highlights</h2>
+        <p>Placeholder-ready slideshow — swap these photos with your own favorites anytime.</p>
+    </div>
+    <div class="slideshow glass-card" data-slideshow>
+        <div class="slides" aria-live="polite">
+            {% for photo in gallery_photos %}
+            <figure class="slide{% if loop.first %} is-active{% endif %}">
+                <img src="{{ photo.src }}" alt="{{ photo.alt }}">
+                <figcaption>{{ photo.caption }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+        <div class="slideshow-controls">
+            <button class="chip chip-button" type="button" data-slide-control="prev" aria-label="Previous photo">Prev</button>
+            <div class="slide-dots" role="tablist" aria-label="Choose slideshow photo">
+                {% for photo in gallery_photos %}
+                <button class="slide-dot{% if loop.first %} is-active{% endif %}" type="button" data-slide-dot="{{ loop.index0 }}" aria-label="Go to photo {{ loop.index }}"></button>
+                {% endfor %}
+            </div>
+            <button class="chip chip-button" type="button" data-slide-control="next" aria-label="Next photo">Next</button>
+        </div>
+    </div>
+</section>
+
+<section id="travel" class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Travel</h2>
+        <p>A map of places I have explored and where I want to go next.</p>
+    </div>
+
+    <div class="card-grid two-col travel-summary">
+        <article class="glass-card">
+            <h3>{{ travel.visited|length }}</h3>
+            <p>Visited destinations</p>
+        </article>
+        <article class="glass-card">
+            <h3>{{ travel.wishlist|length }}</h3>
+            <p>Wishlist destinations</p>
+        </article>
+    </div>
+
+    <div class="glass-card map-wrapper">
+        <div class="map-container">
+            {{ map_html|safe }}
+        </div>
+    </div>
+</section>
+
+<section id="timeline" class="section-shell reveal">
+    <div class="section-heading">
+        <h2>Timeline</h2>
+        <p>Short updates, project wins, and learning moments.</p>
+    </div>
+
+    <div class="timeline-layout">
+        <form id="timeline-form" class="glass-card timeline-form" novalidate>
+            <h3>Share an update</h3>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" rows="4" placeholder="What did you build today?" required></textarea>
+            </div>
+            <button id="timeline-submit" class="btn btn-primary" type="submit">Post update</button>
+            <p id="timeline-status" class="status-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="glass-card timeline-feed" aria-live="polite">
+            <div class="feed-head">
+                <h3>Recent posts</h3>
+                <button id="timeline-refresh" class="chip chip-button" type="button">Refresh</button>
+            </div>
+            <div id="timeline-loading" class="muted">Loading posts…</div>
+            <div id="posts-list" class="stacked-list"></div>
+            <p id="timeline-empty" class="muted" hidden>No posts yet. Be the first one to share an update.</p>
+        </section>
     </div>
 </section>
 {% endblock %}
