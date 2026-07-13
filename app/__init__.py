@@ -1,26 +1,32 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 import folium
 from peewee import *
 import datetime
 from playhouse.shortcuts import model_to_dict
 
-
 from .data import user, hobbies, exp, edu, travel
 
 load_dotenv()
 app = Flask(__name__)
 
-mydb = MySQLDatabase(
-    os.getenv('MYSQL_DATABASE'),
-    user=os.getenv('MYSQL_USER'),
-    password=os.getenv('MYSQL_PASSWORD'),
-    host=os.getenv('MYSQL_HOST'),
-    port=3306
-)
+mysql_db = os.getenv('MYSQL_DATABASE')
+mysql_user = os.getenv('MYSQL_USER')
+mysql_password = os.getenv('MYSQL_PASSWORD')
+mysql_host = os.getenv('MYSQL_HOST')
 
-print(mydb)
+if all([mysql_db, mysql_user, mysql_password, mysql_host]):
+    mydb = MySQLDatabase(
+        mysql_db,
+        user=mysql_user,
+        password=mysql_password,
+        host=mysql_host,
+        port=3306,
+    )
+else:
+    mydb = SqliteDatabase(':memory:')
+
 
 class TimelinePost(Model):
     name = CharField()
@@ -31,7 +37,8 @@ class TimelinePost(Model):
     class Meta:
         database = mydb
 
-mydb.connect()
+
+mydb.connect(reuse_if_open=True)
 mydb.create_tables([TimelinePost])
 
 
@@ -49,23 +56,21 @@ CONTACT = [
     {"label": "LinkedIn", "href": "https://linkedin.com"},
 ]
 
+
 def build_travel_map():
     travel_map = folium.Map(location=[20, 0], zoom_start=2)
-
     for place in travel["visited"]:
         folium.Marker(
             location=[place["lat"], place["lon"]],
             popup=f"{place['name']} (Visited - {place['year']})",
-            icon=folium.Icon(color='green', icon='ok-sign')
+            icon=folium.Icon(color='green', icon='ok-sign'),
         ).add_to(travel_map)
-
     for place in travel["wishlist"]:
         folium.Marker(
             location=[place["lat"], place["lon"]],
             popup=f"{place['name']} (Wishlist)",
-            icon=folium.Icon(color='lightgreen', icon='star')
+            icon=folium.Icon(color='lightgreen', icon='star'),
         ).add_to(travel_map)
-
     return travel_map._repr_html_()
 
 
@@ -87,25 +92,30 @@ def index():
         gallery_photos=gallery_photos,
     )
 
+
 @app.route('/hobbies')
 def hobby():
-    return render_template('hobbies.html', title = "My Hobbies", hobbies = hobbies)
+    return render_template('hobbies.html', title="My Hobbies", hobbies=hobbies)
+
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title="About Me", user = user, edu = edu)
+    return render_template('about.html', title="About Me", user=user, edu=edu)
+
 
 @app.route('/work')
 def work():
-    return render_template('work.html', title="Work Experience", exp = exp)
+    return render_template('work.html', title="Work Experience", exp=exp)
+
 
 @app.route('/travel')
 def travel_page():
     return render_template('travel.html', title="Travel", map_html=build_travel_map(), travel=travel)
 
+
 @app.context_processor
 def nav():
-    return{"links": LINKS, "contact": CONTACT, "url": os.getenv("URL"), "user": user}
+    return {"links": LINKS, "contact": CONTACT, "url": os.getenv("URL"), "user": user}
 
 
 @app.route('/api/timeline_post', methods=['POST'])
@@ -114,8 +124,8 @@ def post_time_line_post():
     email = request.form['email']
     content = request.form['content']
     timeline_post = TimelinePost.create(name=name, email=email, content=content)
-
     return model_to_dict(timeline_post)
+
 
 @app.route('/api/timeline_post', methods=['GET'])
 def get_time_line_post():
@@ -126,7 +136,7 @@ def get_time_line_post():
         ]
     }
 
+
 @app.route('/timeline')
 def timeline():
     return render_template('timeline.html', title="Timeline")
-    
